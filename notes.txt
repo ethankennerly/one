@@ -1,0 +1,343 @@
+TODO
+	mob
+	grenade
+	shrapnel
+	sound
+	music
+
+JOURNAL
+
+Sat 12/14/2013 
+11:00
+
+Starting.  Winter party last night with company and another party with girlfriend.
+
+Ideas:
+
+You Only Get One
+	One Bomb.  Click to explode in 4 directions.  Each thing hit explodes in 4 directions (like in Bomberman).  Solve such that there is one spot to explode all.  Items oscillate.  Like the game Chaos, that Peter showed me back in grad school in 2009, and that Kongregate game about exploding things that explode other things.
+	Long Jump.  Running.  Time long jump.  If right on step, will push off further.  (Olympic Games)
+	Shoot one ball to break a puzzle (Puzzle Bobble, Snood).
+	Launch a sled to collide into targets.  Upgrade.  (Penguin Flight 2 on Kongregate).
+	One Pickup.  Carry a sword, shield, bow.  Switch between items.  Drop items.  Defeat monsters and get through a puzzle.  Gradually encouter each item.  (Legend of Zelda:  A Link to the Past)
+	One Shot.  Shoot a rope that drops apples on landmines that explode (The Hunger Games).
+	Incredible Machine.  Drop a ball somewhere that sets off other items.
+	Swipe.  Mouse trail sparkles.  The sparkles explode whatever goes through them.  The trail only lasts one second.  Blow up as much as possible.  
+
+One Bomb
+	Shrapnel
+	Diamond Cross
+	Diamonds
+	Explode Them All
+	Diamond Dust
+	Fireworks
+	Release
+	Bombshell
+	Brittle
+	Star Cross
+	Gravity
+	Rocket Cutter
+	Exterminator
+	Rats!
+	Rat Exterminator
+	Rat Pack
+
+Four rats in a pack.  When hit by poison, spread out infected.  13/12/14 Beth expects game about rats.
+
+Shrapnel does not wrap around or bounce back.
+	Grenades:
+		Items bounce back and forth on screen.  This is easier to explain
+		Items wrap around.
+
+Grenades are light blue.
+When struck
+
+Shrapnel moves at same speed as the grenades.
+
+Each grenade has star shape.  When struck, it turns from light blue to pink.
+Background is dark blue.
+
+Start Screen
+Big bombs moving.  Whenever one is struck it strikes the others.  
+
+If not all bombs are exploded when no more shrapnel is on screen, then 
+
+Technology:
+	Pure Flash.  Less steady frame rate of motion.  Smoother animations, HUD, transitions.  Detect collision N^2.  The number of objects seems fairly small.  Could optimize collision by bounds exclusion guard.
+	Flixel for rendering and collision detection.  Fast frame rate.
+
+Construct levels from tilemap from PNG.  Scale pixels according to size.  
+
+Ghost image of bomb.
+Snap bomb to nearest tile.
+Respond to mouse down.
+
+Place poison.  Rat reaches poison.  Rats scatter in four directions.  Rat bones at edge of screen.
+
+HUD counts detonations.  Or HUD counts remaining.  Or HUD counts detonations of total.
+
+Translucent grenades and shrapnel.  Or hollow shapes.  Might be helpful if grenades are translucent, to see multiple moving and overlapping, which I saw in Shadow of the Drones.
+
+If correct, complicate.  Complexity from more grenades and larger grid.
+
+Level data:
+	Text
+	PNG
+
+Generate levels:
+	Draw a few.
+	Random.
+	Construct from reverse of solution.
+
+Construct solution in reverse.
+Forward:  Several grenades move.  Each step, each grenade steps and shrapnel steps.  Shrapnel collides with grenade.  That grenade explodes into shrapnel.  The original shrapnel no longer matters, because it has the same position and velocity as one of the new shrapnel.
+Reverse:  Four shrapnel converge at a tile.  That turns into one shrapnel.  Three other shrapnel at the same time converge to another tile.  In another direction besides the first, the shrapnel continue.
+
+Let text represent simple example of tiles:
+	.	empty space
+	>	shrapnel moving left
+	v	shrapnel moving down
+	<	shrapnel moving right
+	^	shrapnel moving up
+	D	grenade moving right
+	A	grenade moving up
+	U	grenade moving down
+	C	grenade moving left
+	@	detonator
+	%	overlapping grenades
+	I	overlapping vertical shrapnel
+	-	overlapping horizontal shrapnel
+	+	detonating grenade
+	o	empty space comment
+	*	empty space comment detonator solution anytime
+	0..9	empty space comment detonator solution after steps
+
+Example:
+	....U
+	....*
+	....*
+	....*
+	D***o
+
+Boring.  The intersections are already observed at o.  
+Any detonation along their path clears the board.
+
+	.D..U
+	.....
+	.....
+	.....
+	D****
+
+Again boring.  Any tile on bottom row reacts with all grenades.
+
+	.D..U
+	D....
+	.....
+	.....
+	D....
+
+Does this have a solution?
+Is this a solution?
+
+Step 0:
+
+	.D..U
+	D..@.
+	.....
+	.....
+	D....
+
+Step 3:
+
+	....D
+	...+.
+	.....
+	....U
+	...D.
+
+Step 4:
+
+	...+.
+	..<.>
+	...v.
+	....U
+	...D.
+
+Step 5:
+
+	..<.>
+	...v.
+	.....
+	...v.
+	....%
+
+Step 6:
+
+	.<...
+	.....
+	...v.
+	....A
+	...+.
+
+Step 7:
+
+	<....
+	.....
+	....A
+	...I.
+	.....
+
+One remains, A.  This can be solved though, I believe:
+
+Step 0:
+
+	.D..U
+	D...@
+	.....
+	.....
+	D....
+
+Step 1:
+
+	..D..
+	.D..+
+	.....
+	.....
+	.D...
+
+Step 2:
+
+	..D.^
+	.D.<.
+	....v
+	.....
+	.D...
+
+Step 3:
+
+	..D..
+	.D<..
+	.....
+	....v
+	..D..
+
+Step 4:
+
+	...D.
+	..+..
+	.....
+	.....
+	...Dv
+
+Wait. Velocities are opposite, so the collision would happen in between tiles.
+
+Step 5:
+
+	...D.
+	..+..
+	.....
+	.....
+	...Dv
+
+Step 6:
+
+	..^.D
+	.<.>.
+	..v..
+	.....
+	....D
+
+Step 7:
+
+	...C.
+	<...>
+	.....
+	..v..
+	...C.
+
+Step 8:
+
+	..C..
+	.....
+	.....
+	.....
+	..+..
+
+Step 9:
+
+	.C...
+	.....
+	.....
+	..^..
+	.<.>.
+
+Step 10:
+
+	C....
+	.....
+	..^..
+	.....
+	<...>
+
+Step 11:
+
+	.D...
+	..^..
+	.....
+	.....
+	.....
+
+Step 12:
+
+	..+..
+	.....
+	.....
+	.....
+	.....
+
+Huzzah!  I feel interested!  I want to play another!
+
+Step 13:
+
+	.<.>.
+	..v..
+	.....
+	.....
+	.....
+
+Step 14:
+
+	<...>
+	.....
+	..v..
+	.....
+	.....
+
+Step 15:
+
+	.....
+	.....
+	.....
+	..v..
+	.....
+
+Step 16:
+
+	.....
+	.....
+	.....
+	.....
+	..v..
+
+Step 17:
+
+	.....
+	.....
+	.....
+	.....
+	.....
+
+Sat 12/14/2013 
+12:11
+
+
