@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8"/>
+	<meta http-equiv="cache-control" content="no-cache, no-store">
+	<title>Exterminator</title>
+	<meta name="description" content="A one-day game by Ethan Kennerly for Ludum Dare (December 13-15) 2013, theme: You Only Get One." />
+	
+	<script src="js/swfobject.js"></script>
+	<script>
+		var flashvars = {
+		};
+		var params = {
+			menu: "false",
+			scale: "noScale",
+			allowFullscreen: "true",
+			allowScriptAccess: "always",
+			bgcolor: "",
+			wmode: "direct" // can cause issues with FP settings & webcam
+		};
+		var attributes = {
+			id:"one"
+		};
+		swfobject.embedSWF(
+			"one.swf", 
+			"altContent", "640", "480", "10.0.0", 
+			"expressInstall.swf", 
+			flashvars, params, attributes);
+	</script>
+	<style>
+		html, body { height:100%; }
+		body { margin:0; background:333333}
+	</style>
+</head>
+<center>
+<body bgcolor=333333>
+<br>
+<br>
+	<div id="altContent">
+		<h1>one</h1>
+		<p><a href="http://www.adobe.com/go/getflashplayer">Get Adobe Flash player</a></p>
+	</div>
+
+<pre>
+<font color=white>
+DEFUSE THE BOMB IN 10 SECONDS!
+
+Click the plug connecting the RED explosives.
+
+A 2-day game by Ethan Kennerly 
+for Ludum Dare (August 23 to 25) 2013
+Theme: 10 seconds
+at themade.org
+Sounds copied from LabChirp examples.
+</font>
+</pre>
+</center>
+</body>
+</html>
