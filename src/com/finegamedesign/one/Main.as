@@ -25,8 +25,10 @@ package com.finegamedesign.one
         private var highScore:int;
         private var level:int;
         private var maxLevel:int;
+        private var model:Model;
         private var inTrial:Boolean;
         private var score:int;
+        private var view:View;
 
         public function Main()
         {
@@ -36,6 +38,7 @@ package com.finegamedesign.one
             highScore = 0;
             level = 1;
             maxLevel = 1;
+            trial();
         }
 
         public function trial():void
@@ -45,6 +48,10 @@ package com.finegamedesign.one
             mouseChildren = true;
             kill = 0;
             maxKill = 0;
+            model = new Model();
+            model.populate(Model.levelDiagrams[0]);
+            view = new View();
+            view.populate(model, mobs, room);
         }
 
         public function restart():void

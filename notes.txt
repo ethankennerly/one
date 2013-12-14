@@ -25,6 +25,7 @@ TODO
 	music
 		auto-tracker
 	screenshots
+	name
 	submit on ludumdare
 	icon
 	kongregate
@@ -68,6 +69,7 @@ One Bomb
 	Rats!
 	Rat Exterminator
 	Rat Pack
+	One Poison to Kill them All
 
 Four rats in a pack.  When hit by poison, spread out infected.  13/12/14 Beth expects game about rats.
 
