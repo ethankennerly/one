@@ -1,23 +1,13 @@
 TODO
-	detonator collides grenade
-		at or just passed.
-	shrapnel collides grenade
-	shrapnel removes at edge of screen
-	grenade turns into shrapnel
-	level 1
-	score
-	title screen	
-		instructions
-		credits
-	level 2
-	level 3
-	level 4
-	level 5
+	win.  do not flicker.
+	scale to fit.
 	only allow placing in space that grenade will traverse.
 	highlight paths where rats move.
 	dynamic levels
 	sync position steps
 	shrapnel leaves corpse.
+	illustrate rat
+	animate rat
 	sound
 		hear collision
 		hear win

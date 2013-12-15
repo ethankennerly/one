@@ -76,6 +76,11 @@ package com.finegamedesign.one
                     model.rowCount);
             }
             position(detonator, model.detonator, model);
+            if (!model.willDetonate()) {
+                if ("dead" != detonator.currentLabel) {
+                    detonator.gotoAndPlay("dead");
+                }
+            }
             detonator.x += room.x;
             detonator.y += room.y;
             detonator.visible = 

@@ -64,12 +64,11 @@ package com.finegamedesign.one
 
         private function mouseDown(event:MouseEvent):void
         {
-            mouseJustPressed = Boolean(!isMouseDown);
-            isMouseDown = true;
+            mouseJustPressed = !isMouseDown;
             if (mouseJustPressed) {
-                model.detonator.solid = true;
-                model.detonator.alive = true;
+                model.detonate();
             }
+            isMouseDown = true;
         }
 
         private function mouseUp(event:MouseEvent):void
@@ -117,6 +116,7 @@ package com.finegamedesign.one
                 result(win);
             }
             else {
+                view.update(model);
                 if ("next" == feedback.currentLabel) {
                     next();
                 }

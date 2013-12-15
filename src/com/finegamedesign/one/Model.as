@@ -1,5 +1,7 @@
 package com.finegamedesign.one
 {
+    import flash.utils.Dictionary;
+
     public class Model
     {
         [Embed(source="levels.txt", mimeType="application/octet-stream")]
@@ -23,6 +25,9 @@ package com.finegamedesign.one
         internal var shrapnelAlive:int;
         internal var table:Array;
 
+        private var detonateColumns:Dictionary;
+        private var detonateRows:Dictionary;
+
         public function Model()
         {
         }
@@ -37,6 +42,8 @@ package com.finegamedesign.one
          */
         internal function populate(diagram:String):void
         {
+            detonateColumns = new Dictionary();
+            detonateRows = new Dictionary();
             grenades = [];
             shrapnels = [];
             this.diagram = diagram;
@@ -50,15 +57,27 @@ package com.finegamedesign.one
                     var character:String = table[row][column];
                     var grenade:Mob = null;
                     if ("D" == character) {
+                        if (!(row in detonateRows)) {
+                            detonateRows[row] = column;
+                        }
                         grenade = new Mob(column, row, 0);
                     }
                     else if ("U" == character) {
+                        if (!(row in detonateColumns)) {
+                            detonateColumns[column] = row;
+                        }
                         grenade = new Mob(column, row, 90);
                     }
                     else if ("C" == character) {
+                        if (!(row in detonateRows)) {
+                            detonateRows[row] = column;
+                        }
                         grenade = new Mob(column, row, 180);
                     }
                     else if ("A" == character) {
+                        if (!(row in detonateColumns)) {
+                            detonateColumns[column] = row;
+                        }
                         grenade = new Mob(column, row, -90);
                     }
                     if (null != grenade) {
@@ -66,7 +85,7 @@ package com.finegamedesign.one
                     }
                 }
             }
-            trace("Model.populate:\n" + diagram + "\n" + table);
+            // trace("Model.populate:\n" + diagram + "\n" + table);
             columnCount = table[0].length;
             rowCount = table.length;
             detonator = new Mob(-1, -1, 0, false);
@@ -183,8 +202,10 @@ package com.finegamedesign.one
                     var collided:Boolean = updateContagion(grenade, 
                             previousColumn, previousRow, shrapnel);
                     if (collided) {
+                        /***#/
                         trace("Model.collideShrapnel: " + grenade.column.toFixed(2) + ", " + grenade.row.toFixed(2) 
                             + " shrapnel " + shrapnel.column.toFixed(2) + ", " + shrapnel.row.toFixed(2));
+                        //*/
                         return true;
                     }
                 }
@@ -201,8 +222,8 @@ package com.finegamedesign.one
                 kill++;
                 detonator.alive = false;
                 mob.alive = false;
-                mob.column = detonator.column;
-                mob.row = detonator.row;
+                // mob.column = detonator.column;
+                // mob.row = detonator.row;
                 mob.velocity.x = 0.0;
                 mob.velocity.y = 0.0;
                 detonator.velocity.x = 0.0;
@@ -259,13 +280,36 @@ package com.finegamedesign.one
             var collision:Boolean = min < position && position < max
                     && minSide < positionSide && positionSide < maxSide;
             if (collision) {
+                /***#/
                 trace("Model.collide: " + min.toFixed(2) + " < " + position.toFixed(2) + " < " + max.toFixed(2) 
                     + " and " + minSide.toFixed(2) + " < " + positionSide.toFixed(2) + " < " + maxSide.toFixed(2)
                     + " mob " + mob.column.toFixed(2) + ", " + mob.row.toFixed(2) 
                     + " detonator " + detonator.column.toFixed(2) + ", " + detonator.row.toFixed(2) 
                         );
+                //*/
             }
             return collision;
+        }
+
+        internal function willDetonate():Boolean
+        {
+            var column:int = Math.round(detonator.column);
+            var row:int = Math.round(detonator.row);
+            if ((column in detonateColumns)
+                || (row in detonateRows)) {
+                    return true;
+            }
+            return false;
+        }
+
+        internal function detonate():Boolean
+        {
+            var detonating:Boolean = willDetonate();
+            if (detonating) {
+                detonator.solid = true;
+                detonator.alive = true;
+            }
+            return detonating;
         }
     }
 }
