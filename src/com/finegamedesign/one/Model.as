@@ -16,7 +16,6 @@ package com.finegamedesign.one
         internal var detonator:Mob;
         internal var diagram:String;
         internal var grenades:Array;
-        internal var mobs:Array;
         internal var rowCount:int;
         internal var shrapnels:Array;
         internal var table:Array;
@@ -37,7 +36,6 @@ package com.finegamedesign.one
         {
             grenades = [];
             shrapnels = [];
-            mobs = [];
             this.diagram = diagram;
             table = diagram.split("\n\n").join("\n").split("\n");
             if (table[table.length - 1].length <= 0) {
@@ -62,7 +60,6 @@ package com.finegamedesign.one
                     }
                     if (null != grenade) {
                         grenades.push(grenade);
-                        mobs.push(grenade);
                     }
                 }
             }
@@ -75,70 +72,134 @@ package com.finegamedesign.one
         internal function update(elapsed:Number):void
         {
             var distance:Number = elapsed * speed;
-            for (var m:int = 0; m < mobs.length; m++) {
-                var mob:Mob = mobs[m];
+            for (var m:int = 0; m < grenades.length; m++) {
+                var mob:Mob = grenades[m];
                 var previousColumn:Number = mob.column;
                 var previousRow:Number = mob.row;
                 mob.column += distance * mob.velocity.x;
                 mob.row += distance * mob.velocity.y;
-                updateDetonator(mob, previousColumn, previousRow);
-                if (mob.column < 0) {
-                    mob.rotation -= 180;
-                    mob.velocity.x *= -1;
-                    mob.column *= -1;
+                if (updateContagion(mob, previousColumn, previousRow, detonator)) {
+                    reflect(mob);
                 }
-                else if (columnCount - 1 < mob.column) {
-                    mob.rotation -= 180;
-                    mob.velocity.x *= -1;
-                    mob.column = columnCount - 1;
-                }
-                if (mob.row < 0) {
-                    mob.rotation -= 180;
-                    mob.velocity.y *= -1;
-                    mob.row *= -1;
-                }
-                else if (rowCount - 1 < mob.row) {
-                    mob.rotation -= 180;
-                    mob.velocity.y *= -1;
-                    mob.row = rowCount - 1;
-                }
+                collideShrapnel(mob, previousColumn, previousRow, shrapnels);
+                // trace("Model.update:" + mob.column + ", " + mob.row);
+            }
+            moveShrapnel(shrapnels, distance);
+        }
+
+        private function rotate(mob:Mob):void
+        {
+            if (mob.rotation <= 0) {
+                mob.rotation += 180.0;
+            }
+            else {
+                mob.rotation -= 180.0;
             }
         }
 
-        private function updateDetonator(mob:Mob, previousColumn:Number, previousRow:Number):void
+        private function reflect(mob:Mob):void
         {
-            if (!detonator.solid) {
-                return;
+            if (mob.column < 0) {
+                rotate(mob);
+                mob.velocity.x *= -1;
+                mob.column *= -1;
             }
-            var min:Number;
+            else if (columnCount - 1 < mob.column) {
+                rotate(mob);
+                mob.velocity.x *= -1;
+                mob.column = columnCount - 1;
+            }
+            if (mob.row < 0) {
+                rotate(mob);
+                mob.velocity.y *= -1;
+                mob.row *= -1;
+            }
+            else if (rowCount - 1 < mob.row) {
+                rotate(mob);
+                mob.velocity.y *= -1;
+                mob.row = rowCount - 1;
+            }
+        }
+
+        private function moveShrapnel(shrapnels:Array, distance:Number):void
+        {
+            for (var m:int = 0; m < shrapnels.length; m++) {
+                var mob:Mob = shrapnels[m];
+                var previousColumn:Number = mob.column;
+                var previousRow:Number = mob.row;
+                mob.column += distance * mob.velocity.x;
+                mob.row += distance * mob.velocity.y;
+            }
+        }
+
+        private function collideShrapnel(grenade:Mob, previousColumn:Number, previousRow:Number, shrapnels:Array):Boolean
+        {
+            for (var m:int = 0; m < shrapnels.length; m++) {
+                updateContagion(grenade, 
+                    previousColumn, previousRow, Mob(shrapnels[m]));
+            }
+            return grenade.alive;
+        }
+
+        private function updateContagion(mob:Mob, previousColumn:Number, previousRow:Number, detonator:Mob):Boolean
+        {
+            if (collide(mob, previousColumn, previousRow, detonator)) {
+                detonator.alive = false;
+                mob.alive = false;
+                mob.column = detonator.column;
+                mob.row = detonator.row;
+                mob.velocity.x = 0.0;
+                mob.velocity.y = 0.0;
+                for (var rotation:Number = -180.0; rotation <= 90.0; rotation += 90.0) {
+                    var shrapnel:Mob = new Mob(detonator.column, detonator.row, rotation);
+                    shrapnels.push(shrapnel);
+                }
+            }
+            return mob.alive;
+        }
+
+        private function collide(mob:Mob, previousColumn:Number, previousRow:Number, detonator:Mob):Boolean
+        {
+            if (!detonator.solid || !detonator.alive || !mob.solid || !mob.alive) {
+                return false;
+            }
+            var margin:Number = 0.05;
             var max:Number;
+            var maxSide:Number;
+            var min:Number;
+            var minSide:Number;
             var position:Number;
+            var positionSide:Number;
             if (mob.velocity.x != 0) {
                 if (previousColumn < mob.column) {
-                    min = previousColumn;
+                    min = previousColumn - margin;
                     max = mob.column;
                 }
                 else {
-                    min = mob.column;
+                    min = mob.column - margin;
                     max = previousColumn;
                 }
                 position = detonator.column;
+                positionSide = mob.row;
+                minSide = mob.row - margin;
+                maxSide = mob.row + margin;
             }
             else if (mob.velocity.y != 0) {
                 if (previousRow < mob.row) {
-                    min = previousRow;
-                    max = mob.row;
+                    min = previousRow - margin;
+                    max = mob.row + margin;
                 }
                 else {
-                    min = mob.row;
-                    max = previousRow;
+                    min = mob.row - margin;
+                    max = previousRow + margin;
                 }
                 position = detonator.row;
+                positionSide = detonator.column;
+                minSide = mob.column - margin;
+                maxSide = mob.column + margin;
             }
-            if (min < position && position < max) {
-                detonator.alive = false;
-            }
+            return min < position && position < max
+                    && minSide < positionSide && positionSide < maxSide;
         }
     }
 }
-

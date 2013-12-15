@@ -37,6 +37,16 @@ package com.finegamedesign.one
 
         public function Main()
         {
+            if (stage) {
+                init(null);
+            }
+            else {
+                addEventListener(Event.ADDED_TO_STAGE, init, false, 0, true);
+            }
+        }
+
+        public function init(event:Event=null):void
+        {
             inTrial = false;
             score = 0;
             highScore = 0;
@@ -54,10 +64,11 @@ package com.finegamedesign.one
 
         private function mouseDown(event:MouseEvent):void
         {
-            mouseJustPressed = !isMouseDown;
+            mouseJustPressed = Boolean(!isMouseDown);
             isMouseDown = true;
             if (mouseJustPressed) {
                 model.detonator.solid = true;
+                model.detonator.alive = true;
             }
         }
 
@@ -93,7 +104,7 @@ package com.finegamedesign.one
                 play();
             }
             else {
-                FlxKongregate.api.stats.submit("Score", score);
+                //+ FlxKongregate.api.stats.submit("Score", score);
                 restart();
             }
             mouseChildren = true;
@@ -126,10 +137,10 @@ package com.finegamedesign.one
             // After stage is setup, connect to Kongregate.
             // http://flixel.org/forums/index.php?topic=293.0
             // http://www.photonstorm.com/tags/kongregate
-            if (! FlxKongregate.hasLoaded && stage != null) {
-                FlxKongregate.stage = stage;
-                FlxKongregate.init(FlxKongregate.connect);
-            }
+            // if (! FlxKongregate.hasLoaded && stage != null) {
+            //     FlxKongregate.stage = stage;
+            //     FlxKongregate.init(FlxKongregate.connect);
+            // }
             if (inTrial) {
                 model.update(elapsed);
                 view.update(model);
@@ -157,7 +168,7 @@ package com.finegamedesign.one
 
         private function wrong():void
         {
-            FlxKongregate.api.stats.submit("Score", score);
+            //+ FlxKongregate.api.stats.submit("Score", score);
             inTrial = false;
             mouseChildren = false;
             feedback.gotoAndPlay("wrong");
