@@ -20,25 +20,29 @@ package com.finegamedesign.one
         public var room:MovieClip;
         public var score_txt:TextField;
 
+        private var elapsed:Number;
         private var kill:int;
         private var maxKill:int;
         private var highScore:int;
+        private var inTrial:Boolean;
         private var level:int;
         private var maxLevel:int;
         private var model:Model;
-        private var inTrial:Boolean;
+        private var previousTime:int;
         private var score:int;
         private var view:View;
 
         public function Main()
         {
             inTrial = false;
-            addEventListener(Event.ENTER_FRAME, update, false, 0, true);
             score = 0;
             highScore = 0;
             level = 1;
             maxLevel = 1;
+            previousTime = getTimer();
+            elapsed = 0;
             trial();
+            addEventListener(Event.ENTER_FRAME, update, false, 0, true);
         }
 
         public function trial():void
@@ -94,6 +98,9 @@ package com.finegamedesign.one
 
         private function update(event:Event):void
         {
+            var now:int = getTimer();
+            elapsed = (now - previousTime) * 0.001;
+            previousTime = now;
             // After stage is setup, connect to Kongregate.
             // http://flixel.org/forums/index.php?topic=293.0
             // http://www.photonstorm.com/tags/kongregate
@@ -102,7 +109,8 @@ package com.finegamedesign.one
                 FlxKongregate.init(FlxKongregate.connect);
             }
             if (inTrial) {
-                // TODO: Update model.
+                model.update(elapsed);
+                view.update(model);
             }
             else {
             }

@@ -15,6 +15,7 @@ TODO
 	level 3
 	level 4
 	level 5
+	only allow placing in space that grenade will traverse.
 	dynamic levels
 	sync position steps
 	shrapnel leaves corpse.

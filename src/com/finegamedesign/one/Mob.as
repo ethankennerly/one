@@ -4,10 +4,8 @@ package com.finegamedesign.one
 
     public class Mob
     {
-        internal var column:int;
-        internal var row:int;
-        internal var x:Number;
-        internal var y:Number;
+        internal var column:Number;
+        internal var row:Number;
         internal var rotation:Number;
         internal var velocity:Point;
 
@@ -19,7 +17,7 @@ package com.finegamedesign.one
             velocity = new Point();
             velocity.x = Math.round(Math.cos(rotation));
             velocity.y = Math.round(Math.sin(rotation));
-            trace("Mob: " + arguments);
+            // trace("Mob: " + arguments);
         }
     }
 }
