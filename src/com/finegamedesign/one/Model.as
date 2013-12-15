@@ -11,6 +11,8 @@ package com.finegamedesign.one
             return levelDiagramsText.split("\r").join("").split("\n\n");
         }
 
+        internal var kill:int;
+        internal var maxKill:int;
         internal var speed:Number = 1.0;
         internal var columnCount:int;
         internal var detonator:Mob;
@@ -18,6 +20,7 @@ package com.finegamedesign.one
         internal var grenades:Array;
         internal var rowCount:int;
         internal var shrapnels:Array;
+        internal var shrapnelAlive:int;
         internal var table:Array;
 
         public function Model()
@@ -67,9 +70,11 @@ package com.finegamedesign.one
             columnCount = table[0].length;
             rowCount = table.length;
             detonator = new Mob(-1, -1, 0, false);
+            kill = 0;
+            maxKill = grenades.length;
         }
 
-        internal function update(elapsed:Number):void
+        internal function update(elapsed:Number):int
         {
             var distance:Number = elapsed * speed;
             for (var m:int = 0; m < grenades.length; m++) {
@@ -84,50 +89,85 @@ package com.finegamedesign.one
                 collideShrapnel(mob, previousColumn, previousRow, shrapnels);
                 // trace("Model.update:" + mob.column + ", " + mob.row);
             }
-            moveShrapnel(shrapnels, distance);
+            shrapnelAlive = moveShrapnel(shrapnels, distance);
+            return win();
         }
 
-        private function rotate(mob:Mob):void
+        /**
+         * @return  0 continue, 1: win, -1: lose.
+         */
+        private function win():int
+        {
+            var winning:int = 0;
+            if (maxKill <= kill) {
+                if (shrapnelAlive <= 0) {
+                    winning = 1;
+                }
+            }
+            else if (!detonator.alive) {
+                if (shrapnelAlive <= 0) {
+                    winning = -1;
+                }
+            }
+            return winning;
+        }
+
+        private function rotate(mob:Mob, elasticity:Number=1.0):void
         {
             if (mob.rotation <= 0) {
-                mob.rotation += 180.0;
+                mob.rotation += 180.0 * elasticity;
             }
             else {
-                mob.rotation -= 180.0;
+                mob.rotation -= 180.0 * elasticity;
             }
         }
 
-        private function reflect(mob:Mob):void
+        private function reflect(mob:Mob, elasticity:Number=1.0):Boolean
         {
+            var reflected:Boolean = false;
             if (mob.column < 0) {
-                rotate(mob);
-                mob.velocity.x *= -1;
-                mob.column *= -1;
+                rotate(mob, elasticity);
+                mob.velocity.x *= -elasticity;
+                mob.column = 0;
+                reflected = true;
             }
             else if (columnCount - 1 < mob.column) {
-                rotate(mob);
-                mob.velocity.x *= -1;
+                rotate(mob, elasticity);
+                mob.velocity.x *= -elasticity;
                 mob.column = columnCount - 1;
+                reflected = true;
             }
             if (mob.row < 0) {
-                rotate(mob);
-                mob.velocity.y *= -1;
-                mob.row *= -1;
+                rotate(mob, elasticity);
+                mob.velocity.y *= -elasticity;
+                mob.row = 0;
+                reflected = true;
             }
             else if (rowCount - 1 < mob.row) {
-                rotate(mob);
-                mob.velocity.y *= -1;
+                rotate(mob, elasticity);
+                mob.velocity.y *= -elasticity;
                 mob.row = rowCount - 1;
+                reflected = true;
             }
+            return reflected;
         }
 
-        private function moveShrapnel(shrapnels:Array, distance:Number):void
+        /**
+         * @return count of alive.
+         */
+        private function moveShrapnel(shrapnels:Array, distance:Number):int
         {
+            var aliveCount:int = 0;
             for (var m:int = 0; m < shrapnels.length; m++) {
                 var mob:Mob = shrapnels[m];
                 mob.column += distance * mob.velocity.x;
                 mob.row += distance * mob.velocity.y;
+                if (reflect(mob, 0)) {
+                    mob.alive = false;
+                }
+                aliveCount += mob.alive ? 1 : 0;
             }
+            return aliveCount;
         }
 
         private function collideShrapnel(grenade:Mob, previousColumn:Number, previousRow:Number, shrapnels:Array):Boolean
@@ -142,6 +182,7 @@ package com.finegamedesign.one
         private function updateContagion(mob:Mob, previousColumn:Number, previousRow:Number, detonator:Mob):Boolean
         {
             if (collide(mob, previousColumn, previousRow, detonator)) {
+                kill++;
                 detonator.alive = false;
                 mob.alive = false;
                 mob.column = detonator.column;

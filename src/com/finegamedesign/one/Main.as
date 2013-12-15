@@ -22,8 +22,6 @@ package com.finegamedesign.one
         public var score_txt:TextField;
 
         private var elapsed:Number;
-        private var kill:int;
-        private var maxKill:int;
         private var highScore:int;
         private var inTrial:Boolean;
         private var isMouseDown:Boolean;
@@ -51,12 +49,14 @@ package com.finegamedesign.one
             score = 0;
             highScore = 0;
             level = 1;
-            maxLevel = 1;
+            maxLevel = Model.levelDiagrams.length;
             previousTime = getTimer();
             elapsed = 0;
             mouseJustPressed = false;
             isMouseDown = false;
-            trial();
+            model = new Model();
+            view = new View();
+            trial(level);
             addEventListener(Event.ENTER_FRAME, update, false, 0, true);
             addEventListener(MouseEvent.MOUSE_DOWN, mouseDown, false, 0, true);
             addEventListener(MouseEvent.MOUSE_UP, mouseUp, false, 0, true);
@@ -78,44 +78,15 @@ package com.finegamedesign.one
             isMouseDown = false;
         }
 
-        public function trial():void
+        public function trial(level:int):void
         {
             stop();
             inTrial = true;
             mouseChildren = true;
-            kill = 0;
-            maxKill = 0;
-            model = new Model();
-            model.populate(Model.levelDiagrams[0]);
-            view = new View();
+            model.kill = 0;
+            model.maxKill = 0;
+            model.populate(Model.levelDiagrams[level - 1]);
             view.populate(model, mobs, room, detonator);
-        }
-
-        public function restart():void
-        {
-            score = 0;
-            gotoAndPlay(1);
-            mouseChildren = true;
-        }
-
-        public function next():void
-        {
-            if (currentFrame < totalFrames) {
-                play();
-            }
-            else {
-                //+ FlxKongregate.api.stats.submit("Score", score);
-                restart();
-            }
-            mouseChildren = true;
-        }
-
-        private function scoreUp():void
-        {
-            score += kill;
-            if (highScore < score) {
-                highScore = score;
-            }
         }
 
         private function updateHudText():void
@@ -125,8 +96,8 @@ package com.finegamedesign.one
             highScore_txt.text = highScore.toString();
             level_txt.text = level.toString();
             maxLevel_txt.text = maxLevel.toString();
-            kill_txt.text = kill.toString();
-            maxKill_txt.text = maxKill.toString();
+            kill_txt.text = model.kill.toString();
+            maxKill_txt.text = model.maxKill.toString();
         }
 
         private function update(event:Event):void
@@ -137,42 +108,83 @@ package com.finegamedesign.one
             // After stage is setup, connect to Kongregate.
             // http://flixel.org/forums/index.php?topic=293.0
             // http://www.photonstorm.com/tags/kongregate
-            // if (! FlxKongregate.hasLoaded && stage != null) {
-            //     FlxKongregate.stage = stage;
-            //     FlxKongregate.init(FlxKongregate.connect);
-            // }
+            if (! FlxKongregate.hasLoaded && stage != null) {
+                FlxKongregate.stage = stage;
+                FlxKongregate.init(FlxKongregate.connect);
+            }
             if (inTrial) {
-                model.update(elapsed);
+                var win:int = model.update(elapsed);
                 view.update(model);
+                result(win);
             }
             else {
+                if ("next" == feedback.currentLabel) {
+                    next();
+                }
             }
             updateHudText();
         }
 
-        private function answer(event:Event):void
+        private function result(win:int):void
         {
-            var correct:Boolean = false;
-            if (correct) {
-                if (inTrial) {
-                    scoreUp();
-                }
-                inTrial = false;
-                mouseChildren = false;
-                feedback.gotoAndPlay("correct");
+            if (!inTrial) {
+                return;
             }
-            else {
+            if (win <= -1) {
                 wrong();
             }
+            else if (1 <= win) {
+                correct();
+            }
+        }
+
+        private function correct():void
+        {
+            inTrial = false;
+            scoreUp();
+            level++;
+            if (Model.levelDiagrams.length < level) {
+                level = 0;
+                feedback.gotoAndPlay("complete");
+            }
+            else {
+                feedback.gotoAndPlay("correct");
+            }
+            FlxKongregate.api.stats.submit("Score", score);
         }
 
         private function wrong():void
         {
-            //+ FlxKongregate.api.stats.submit("Score", score);
             inTrial = false;
+            FlxKongregate.api.stats.submit("Score", score);
             mouseChildren = false;
             feedback.gotoAndPlay("wrong");
-            level = Math.max(0, level - 1);
+            level = 0;
+        }
+
+        public function next():void
+        {
+            feedback.gotoAndPlay("none");
+            if (level <= 0) {
+                restart();
+            }
+            mouseChildren = true;
+        }
+
+        private function scoreUp():void
+        {
+            score += model.kill;
+            if (highScore < score) {
+                highScore = score;
+            }
+        }
+
+        public function restart():void
+        {
+            score = 0;
+            level = 1;
+            gotoAndPlay(1);
+            mouseChildren = true;
         }
     }
 }

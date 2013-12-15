@@ -21,7 +21,7 @@ package com.finegamedesign.one
             velocity = new Point();
             velocity.x = Math.round(Math.cos(rotation * Math.PI / 180.0));
             velocity.y = Math.round(Math.sin(rotation * Math.PI / 180.0));
-            trace("Mob: " + arguments + " " + velocity);
+            // trace("Mob: " + arguments + " " + velocity);
         }
     }
 }

@@ -52,7 +52,7 @@ package com.finegamedesign.one
             if (label != mc.currentLabel) {
                 mc.gotoAndPlay(label);
             } 
-            // trace("View.position: " + mc + ": " + mc.x.toFixed(1) + ", " + mc.y.toFixed(1));
+            // trace("View.position: " + mc + ": " + mc.x.toFixed(1) + ", " + mc.y.toFixed(1) + " label " + label);
         }
 
         internal function columnAt(roomX:Number, columnCount):int
@@ -74,10 +74,10 @@ package com.finegamedesign.one
                 model.detonator.row = rowAt(
                     room.scaleY * room.mouseY, 
                     model.rowCount);
-                position(detonator, model.detonator, model);
-                detonator.x += room.x;
-                detonator.y += room.y;
             }
+            position(detonator, model.detonator, model);
+            detonator.x += room.x;
+            detonator.y += room.y;
             detonator.visible = 
                 (0 <= model.detonator.column) 
                 && (0 <= model.detonator.row)
