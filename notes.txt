@@ -1,11 +1,7 @@
 TODO
-	win.  do not flicker.
-	scale to fit.
-	only allow placing in space that grenade will traverse.
-	highlight paths where rats move.
-	dynamic levels
-	sync position steps
-	shrapnel leaves corpse.
+	see tile
+	scale to fit tiles.
+	speed up button
 	illustrate rat
 	animate rat
 	sound
@@ -20,6 +16,8 @@ TODO
 	icon
 	kongregate
 	post-mortem
+	dynamic levels
+	sync position steps
 
 
 

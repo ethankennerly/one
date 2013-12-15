@@ -1,6 +1,7 @@
 package com.finegamedesign.one
 {
     import flash.display.MovieClip;
+    import flash.display.SimpleButton;
     import flash.events.Event;
     import flash.events.MouseEvent;
     import flash.text.TextField;
@@ -20,6 +21,7 @@ package com.finegamedesign.one
         public var mobs:MovieClip;
         public var room:MovieClip;
         public var score_txt:TextField;
+        public var speed_btn:SimpleButton;
 
         private var elapsed:Number;
         private var highScore:int;
@@ -31,6 +33,7 @@ package com.finegamedesign.one
         private var model:Model;
         private var previousTime:int;
         private var score:int;
+        private var speed:Number;
         private var view:View;
 
         public function Main()
@@ -49,6 +52,7 @@ package com.finegamedesign.one
             score = 0;
             highScore = 0;
             level = 1;
+            speed = 1.0;
             maxLevel = Model.levelDiagrams.length;
             previousTime = getTimer();
             elapsed = 0;
@@ -60,6 +64,7 @@ package com.finegamedesign.one
             addEventListener(Event.ENTER_FRAME, update, false, 0, true);
             addEventListener(MouseEvent.MOUSE_DOWN, mouseDown, false, 0, true);
             addEventListener(MouseEvent.MOUSE_UP, mouseUp, false, 0, true);
+            speed_btn.addEventListener(MouseEvent.CLICK, alternateSpeed, false, 0, true);
         }
 
         private function mouseDown(event:MouseEvent):void
@@ -75,6 +80,11 @@ package com.finegamedesign.one
         {
             mouseJustPressed = false;
             isMouseDown = false;
+        }
+
+        private function alternateSpeed(event:MouseEvent):void
+        {
+            speed = speed <= 1.0 ? 8.0: 1.0;
         }
 
         public function trial(level:int):void
@@ -101,7 +111,7 @@ package com.finegamedesign.one
         private function update(event:Event):void
         {
             var now:int = getTimer();
-            elapsed = (now - previousTime) * 0.001;
+            elapsed = speed * (now - previousTime) * 0.001;
             previousTime = now;
             // After stage is setup, connect to Kongregate.
             // http://flixel.org/forums/index.php?topic=293.0
@@ -191,6 +201,7 @@ package com.finegamedesign.one
             trial(level);
             mouseChildren = true;
             gotoAndPlay(1);
+            speed = 1.0;
         }
     }
 }

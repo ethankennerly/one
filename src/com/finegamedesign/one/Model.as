@@ -15,7 +15,7 @@ package com.finegamedesign.one
 
         internal var kill:int;
         internal var maxKill:int;
-        internal var speed:Number = 1.0;
+        internal var speed:Number = 2.0;
         internal var columnCount:int;
         internal var detonator:Mob;
         internal var diagram:String;
