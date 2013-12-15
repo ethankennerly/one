@@ -79,15 +79,17 @@ package com.finegamedesign.one
             var distance:Number = elapsed * speed;
             for (var m:int = 0; m < grenades.length; m++) {
                 var mob:Mob = grenades[m];
-                var previousColumn:Number = mob.column;
-                var previousRow:Number = mob.row;
-                mob.column += distance * mob.velocity.x;
-                mob.row += distance * mob.velocity.y;
-                if (updateContagion(mob, previousColumn, previousRow, detonator)) {
-                    reflect(mob);
+                if (mob.alive) {
+                    var previousColumn:Number = mob.column;
+                    var previousRow:Number = mob.row;
+                    mob.column += distance * mob.velocity.x;
+                    mob.row += distance * mob.velocity.y;
+                    if (!updateContagion(mob, previousColumn, previousRow, detonator)) {
+                        reflect(mob);
+                        collideShrapnel(mob, previousColumn, previousRow, shrapnels);
+                    }
+                    // trace("Model.update:" + mob.column + ", " + mob.row);
                 }
-                collideShrapnel(mob, previousColumn, previousRow, shrapnels);
-                // trace("Model.update:" + mob.column + ", " + mob.row);
             }
             shrapnelAlive = moveShrapnel(shrapnels, distance);
             return win();
@@ -153,7 +155,7 @@ package com.finegamedesign.one
         }
 
         /**
-         * @return count of alive.
+         * @return count of alive shrapnel.
          */
         private function moveShrapnel(shrapnels:Array, distance:Number):int
         {
@@ -170,15 +172,29 @@ package com.finegamedesign.one
             return aliveCount;
         }
 
+        /**
+         * @return collided
+         */
         private function collideShrapnel(grenade:Mob, previousColumn:Number, previousRow:Number, shrapnels:Array):Boolean
         {
-            for (var m:int = 0; m < shrapnels.length; m++) {
-                updateContagion(grenade, 
-                    previousColumn, previousRow, Mob(shrapnels[m]));
+            if (grenade.alive) {
+                for (var m:int = 0; m < shrapnels.length; m++) {
+                    var shrapnel:Mob = Mob(shrapnels[m]);
+                    var collided:Boolean = updateContagion(grenade, 
+                            previousColumn, previousRow, shrapnel);
+                    if (collided) {
+                        trace("Model.collideShrapnel: " + grenade.column.toFixed(2) + ", " + grenade.row.toFixed(2) 
+                            + " shrapnel " + shrapnel.column.toFixed(2) + ", " + shrapnel.row.toFixed(2));
+                        return true;
+                    }
+                }
             }
-            return grenade.alive;
+            return false;
         }
 
+        /**
+         * @return collided
+         */
         private function updateContagion(mob:Mob, previousColumn:Number, previousRow:Number, detonator:Mob):Boolean
         {
             if (collide(mob, previousColumn, previousRow, detonator)) {
@@ -189,12 +205,15 @@ package com.finegamedesign.one
                 mob.row = detonator.row;
                 mob.velocity.x = 0.0;
                 mob.velocity.y = 0.0;
+                detonator.velocity.x = 0.0;
+                detonator.velocity.y = 0.0;
                 for (var rotation:Number = 90.0; -180.0 <= rotation; rotation -= 90.0) {
                     var shrapnel:Mob = new Mob(detonator.column, detonator.row, rotation);
                     shrapnels.push(shrapnel);
                 }
+                return true;
             }
-            return mob.alive;
+            return false;
         }
 
         private function collide(mob:Mob, previousColumn:Number, previousRow:Number, detonator:Mob):Boolean
@@ -203,13 +222,13 @@ package com.finegamedesign.one
                 return false;
             }
             var margin:Number = 0.05;
-            var max:Number;
-            var maxSide:Number;
+            var max:Number = Number.NEGATIVE_INFINITY;
+            var maxSide:Number = Number.NEGATIVE_INFINITY;
             var min:Number;
             var minSide:Number;
-            var position:Number;
-            var positionSide:Number;
-            if (mob.velocity.x != 0) {
+            var position:Number = Number.POSITIVE_INFINITY;
+            var positionSide:Number = Number.POSITIVE_INFINITY;
+            if (margin < Math.abs(mob.velocity.x)) {
                 if (previousColumn < mob.column) {
                     min = previousColumn - margin;
                     max = mob.column;
@@ -219,11 +238,11 @@ package com.finegamedesign.one
                     max = previousColumn + margin;
                 }
                 position = detonator.column;
-                positionSide = mob.row;
+                positionSide = detonator.row;
                 minSide = mob.row - margin;
                 maxSide = mob.row + margin;
             }
-            else if (mob.velocity.y != 0) {
+            else if (margin < Math.abs(mob.velocity.y)) {
                 if (previousRow < mob.row) {
                     min = previousRow - margin;
                     max = mob.row;
@@ -237,8 +256,16 @@ package com.finegamedesign.one
                 minSide = mob.column - margin;
                 maxSide = mob.column + margin;
             }
-            return min < position && position < max
+            var collision:Boolean = min < position && position < max
                     && minSide < positionSide && positionSide < maxSide;
+            if (collision) {
+                trace("Model.collide: " + min.toFixed(2) + " < " + position.toFixed(2) + " < " + max.toFixed(2) 
+                    + " and " + minSide.toFixed(2) + " < " + positionSide.toFixed(2) + " < " + maxSide.toFixed(2)
+                    + " mob " + mob.column.toFixed(2) + ", " + mob.row.toFixed(2) 
+                    + " detonator " + detonator.column.toFixed(2) + ", " + detonator.row.toFixed(2) 
+                        );
+            }
+            return collision;
         }
     }
 }

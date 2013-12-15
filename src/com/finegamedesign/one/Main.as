@@ -165,10 +165,13 @@ package com.finegamedesign.one
         public function next():void
         {
             feedback.gotoAndPlay("none");
+            mouseChildren = true;
             if (level <= 0) {
                 restart();
             }
-            mouseChildren = true;
+            else {
+                trial(level);
+            }
         }
 
         private function scoreUp():void
@@ -183,7 +186,7 @@ package com.finegamedesign.one
         {
             score = 0;
             level = 1;
-            gotoAndPlay(1);
+            trial(level);
             mouseChildren = true;
         }
     }
