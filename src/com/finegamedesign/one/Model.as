@@ -221,7 +221,7 @@ package com.finegamedesign.one
             if (!detonator.solid || !detonator.alive || !mob.solid || !mob.alive) {
                 return false;
             }
-            var margin:Number = 0.05;
+            var margin:Number = 0.375;
             var max:Number = Number.NEGATIVE_INFINITY;
             var maxSide:Number = Number.NEGATIVE_INFINITY;
             var min:Number;

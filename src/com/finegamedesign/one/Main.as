@@ -80,7 +80,6 @@ package com.finegamedesign.one
 
         public function trial(level:int):void
         {
-            stop();
             inTrial = true;
             mouseChildren = true;
             model.kill = 0;
@@ -166,6 +165,9 @@ package com.finegamedesign.one
         {
             feedback.gotoAndPlay("none");
             mouseChildren = true;
+            if (currentFrame < totalFrames) {
+                nextFrame();
+            }
             if (level <= 0) {
                 restart();
             }
@@ -188,6 +190,7 @@ package com.finegamedesign.one
             level = 1;
             trial(level);
             mouseChildren = true;
+            gotoAndPlay(1);
         }
     }
 }
