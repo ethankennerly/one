@@ -1,8 +1,4 @@
 TODO
-	mob moves
-	grenade moves
-	grenade reflects at edge of screen
-	read diagram
 	shrapnel collides
 	shrapnel removes at edge of screen
 	grenade turns into shrapnel
@@ -16,6 +12,7 @@ TODO
 	level 4
 	level 5
 	only allow placing in space that grenade will traverse.
+	highlight paths where rats move.
 	dynamic levels
 	sync position steps
 	shrapnel leaves corpse.

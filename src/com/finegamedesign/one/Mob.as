@@ -7,13 +7,15 @@ package com.finegamedesign.one
         internal var column:Number;
         internal var row:Number;
         internal var rotation:Number;
+        internal var solid:Boolean;
         internal var velocity:Point;
 
-        public function Mob(column:int, row:int, rotation:Number)
+        public function Mob(column:int, row:int, rotation:Number, solid:Boolean=true)
         {
             this.column = column;
             this.row = row;
             this.rotation = Math.round(rotation);
+            this.solid = solid;
             velocity = new Point();
             velocity.x = Math.round(Math.cos(rotation));
             velocity.y = Math.round(Math.sin(rotation));

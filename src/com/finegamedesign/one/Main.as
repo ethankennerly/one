@@ -2,6 +2,7 @@ package com.finegamedesign.one
 {
     import flash.display.MovieClip;
     import flash.events.Event;
+    import flash.events.MouseEvent;
     import flash.text.TextField;
     import flash.utils.getTimer;
 
@@ -25,6 +26,8 @@ package com.finegamedesign.one
         private var maxKill:int;
         private var highScore:int;
         private var inTrial:Boolean;
+        private var isMouseDown:Boolean;
+        private var mouseJustPressed:Boolean;
         private var level:int;
         private var maxLevel:int;
         private var model:Model;
@@ -41,8 +44,27 @@ package com.finegamedesign.one
             maxLevel = 1;
             previousTime = getTimer();
             elapsed = 0;
+            mouseJustPressed = false;
+            isMouseDown = false;
             trial();
             addEventListener(Event.ENTER_FRAME, update, false, 0, true);
+            addEventListener(MouseEvent.MOUSE_DOWN, mouseDown, false, 0, true);
+            addEventListener(MouseEvent.MOUSE_UP, mouseUp, false, 0, true);
+        }
+
+        private function mouseDown(event:MouseEvent):void
+        {
+            mouseJustPressed = !isMouseDown;
+            isMouseDown = true;
+            if (mouseJustPressed) {
+                model.detonator.solid = true;
+            }
+        }
+
+        private function mouseUp(event:MouseEvent):void
+        {
+            mouseJustPressed = false;
+            isMouseDown = false;
         }
 
         public function trial():void
@@ -55,7 +77,7 @@ package com.finegamedesign.one
             model = new Model();
             model.populate(Model.levelDiagrams[0]);
             view = new View();
-            view.populate(model, mobs, room);
+            view.populate(model, mobs, room, detonator);
         }
 
         public function restart():void

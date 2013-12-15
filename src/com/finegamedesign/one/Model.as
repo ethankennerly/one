@@ -69,6 +69,7 @@ package com.finegamedesign.one
             trace("Model.populate:\n" + diagram + "\n" + table);
             columnCount = table[0].length;
             rowCount = table.length;
+            detonator = new Mob(-1, -1, 0, false);
         }
 
         internal function update(elapsed:Number):void
