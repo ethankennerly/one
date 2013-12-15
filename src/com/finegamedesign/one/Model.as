@@ -125,8 +125,6 @@ package com.finegamedesign.one
         {
             for (var m:int = 0; m < shrapnels.length; m++) {
                 var mob:Mob = shrapnels[m];
-                var previousColumn:Number = mob.column;
-                var previousRow:Number = mob.row;
                 mob.column += distance * mob.velocity.x;
                 mob.row += distance * mob.velocity.y;
             }
@@ -150,7 +148,7 @@ package com.finegamedesign.one
                 mob.row = detonator.row;
                 mob.velocity.x = 0.0;
                 mob.velocity.y = 0.0;
-                for (var rotation:Number = -180.0; rotation <= 90.0; rotation += 90.0) {
+                for (var rotation:Number = 90.0; -180.0 <= rotation; rotation -= 90.0) {
                     var shrapnel:Mob = new Mob(detonator.column, detonator.row, rotation);
                     shrapnels.push(shrapnel);
                 }
@@ -176,8 +174,8 @@ package com.finegamedesign.one
                     max = mob.column;
                 }
                 else {
-                    min = mob.column - margin;
-                    max = previousColumn;
+                    min = mob.column;
+                    max = previousColumn + margin;
                 }
                 position = detonator.column;
                 positionSide = mob.row;
@@ -187,10 +185,10 @@ package com.finegamedesign.one
             else if (mob.velocity.y != 0) {
                 if (previousRow < mob.row) {
                     min = previousRow - margin;
-                    max = mob.row + margin;
+                    max = mob.row;
                 }
                 else {
-                    min = mob.row - margin;
+                    min = mob.row;
                     max = previousRow + margin;
                 }
                 position = detonator.row;

@@ -19,9 +19,9 @@ package com.finegamedesign.one
             this.solid = solid;
             this.alive = true;
             velocity = new Point();
-            velocity.x = Math.round(Math.cos(rotation));
-            velocity.y = Math.round(Math.sin(rotation));
-            // trace("Mob: " + arguments);
+            velocity.x = Math.round(Math.cos(rotation * Math.PI / 180.0));
+            velocity.y = Math.round(Math.sin(rotation * Math.PI / 180.0));
+            trace("Mob: " + arguments + " " + velocity);
         }
     }
 }
