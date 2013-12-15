@@ -70,7 +70,8 @@ package com.finegamedesign.one
                 detonator.x += room.x;
                 detonator.y += room.y;
             }
-            var label:String = model.detonator.solid ? "active" : 
+            var label:String = model.detonator.solid ? 
+                (model.detonator.alive ? "active" : "consumed") : 
                 
                 "preview";
             if (label != detonator.currentLabel) {

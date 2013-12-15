@@ -1,5 +1,7 @@
 TODO
-	shrapnel collides
+	detonator collides grenade
+		at or just passed.
+	shrapnel collides grenade
 	shrapnel removes at edge of screen
 	grenade turns into shrapnel
 	level 1

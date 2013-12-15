@@ -77,7 +77,11 @@ package com.finegamedesign.one
             var distance:Number = elapsed * speed;
             for (var m:int = 0; m < mobs.length; m++) {
                 var mob:Mob = mobs[m];
+                var previousColumn:Number = mob.column;
+                var previousRow:Number = mob.row;
                 mob.column += distance * mob.velocity.x;
+                mob.row += distance * mob.velocity.y;
+                updateDetonator(mob, previousColumn, previousRow);
                 if (mob.column < 0) {
                     mob.rotation -= 180;
                     mob.velocity.x *= -1;
@@ -88,7 +92,6 @@ package com.finegamedesign.one
                     mob.velocity.x *= -1;
                     mob.column = columnCount - 1;
                 }
-                mob.row += distance * mob.velocity.y;
                 if (mob.row < 0) {
                     mob.rotation -= 180;
                     mob.velocity.y *= -1;
@@ -99,6 +102,41 @@ package com.finegamedesign.one
                     mob.velocity.y *= -1;
                     mob.row = rowCount - 1;
                 }
+            }
+        }
+
+        private function updateDetonator(mob:Mob, previousColumn:Number, previousRow:Number):void
+        {
+            if (!detonator.solid) {
+                return;
+            }
+            var min:Number;
+            var max:Number;
+            var position:Number;
+            if (mob.velocity.x != 0) {
+                if (previousColumn < mob.column) {
+                    min = previousColumn;
+                    max = mob.column;
+                }
+                else {
+                    min = mob.column;
+                    max = previousColumn;
+                }
+                position = detonator.column;
+            }
+            else if (mob.velocity.y != 0) {
+                if (previousRow < mob.row) {
+                    min = previousRow;
+                    max = mob.row;
+                }
+                else {
+                    min = mob.row;
+                    max = previousRow;
+                }
+                position = detonator.row;
+            }
+            if (min < position && position < max) {
+                detonator.alive = false;
             }
         }
     }

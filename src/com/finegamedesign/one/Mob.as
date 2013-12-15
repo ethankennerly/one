@@ -7,6 +7,7 @@ package com.finegamedesign.one
         internal var column:Number;
         internal var row:Number;
         internal var rotation:Number;
+        internal var alive:Boolean;
         internal var solid:Boolean;
         internal var velocity:Point;
 
@@ -16,6 +17,7 @@ package com.finegamedesign.one
             this.row = row;
             this.rotation = Math.round(rotation);
             this.solid = solid;
+            this.alive = true;
             velocity = new Point();
             velocity.x = Math.round(Math.cos(rotation));
             velocity.y = Math.round(Math.sin(rotation));
