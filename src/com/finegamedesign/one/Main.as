@@ -82,6 +82,7 @@ package com.finegamedesign.one
             addEventListener(MouseEvent.MOUSE_DOWN, mouseDown, false, 0, true);
             addEventListener(MouseEvent.MOUSE_UP, mouseUp, false, 0, true);
             speed_btn.addEventListener(MouseEvent.CLICK, alternateSpeed, false, 0, true);
+            level_txt.addEventListener(MouseEvent.CLICK, cheatLevel, false, 0, true);
         }
 
         private function mouseDown(event:MouseEvent):void
@@ -102,6 +103,14 @@ package com.finegamedesign.one
         private function alternateSpeed(event:MouseEvent):void
         {
             Model.alternateSpeed();
+        }
+
+        private function cheatLevel(event:MouseEvent):void
+        {
+            level++;
+            if (maxLevel < level) {
+                level = 1;
+            }
         }
 
         public function trial(level:int):void
