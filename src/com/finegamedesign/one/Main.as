@@ -12,9 +12,21 @@ package com.finegamedesign.one
 
     public dynamic class Main extends MovieClip
     {
+        [Embed(source="../../../../sfx/complete.mp3")]
+        private static var completeClass:Class;
+        private var complete:Sound = new completeClass();
+        [Embed(source="../../../../sfx/correct.mp3")]
+        private static var correctClass:Class;
+        private var correct:Sound = new correctClass();
+        [Embed(source="../../../../sfx/wrong.mp3")]
+        private static var wrongClass:Class;
+        private var wrong:Sound = new wrongClass();
         [Embed(source="../../../../sfx/contagion.mp3")]
         private static var contagionClass:Class;
         private var contagion:Sound = new contagionClass();
+        [Embed(source="../../../../sfx/die.mp3")]
+        private static var dieClass:Class;
+        private var die:Sound = new dieClass();
 
         public var detonator:MovieClip;
         public var feedback:MovieClip;
@@ -63,6 +75,7 @@ package com.finegamedesign.one
             isMouseDown = false;
             model = new Model();
             model.onContagion = contagion.play;
+            model.onDie = die.play;
             view = new View();
             trial(level);
             addEventListener(Event.ENTER_FRAME, update, false, 0, true);
@@ -138,20 +151,20 @@ package com.finegamedesign.one
             updateHudText();
         }
 
-        private function result(win:int):void
+        private function result(winning:int):void
         {
             if (!inTrial) {
                 return;
             }
-            if (win <= -1) {
-                wrong();
+            if (winning <= -1) {
+                lose();
             }
-            else if (1 <= win) {
-                correct();
+            else if (1 <= winning) {
+                win();
             }
         }
 
-        private function correct():void
+        private function win():void
         {
             inTrial = false;
             scoreUp();
@@ -159,19 +172,22 @@ package com.finegamedesign.one
             if (Model.levelDiagrams.length < level) {
                 level = 0;
                 feedback.gotoAndPlay("complete");
+                complete.play();
             }
             else {
                 feedback.gotoAndPlay("correct");
+                correct.play();
             }
             FlxKongregate.api.stats.submit("Score", score);
         }
 
-        private function wrong():void
+        private function lose():void
         {
             inTrial = false;
             FlxKongregate.api.stats.submit("Score", score);
             mouseChildren = false;
             feedback.gotoAndPlay("wrong");
+            wrong.play();
             level = 0;
         }
 

@@ -27,10 +27,11 @@ package com.finegamedesign.one
         internal var detonator:Mob;
         internal var diagram:String;
         internal var grenades:Array;
+        internal var onContagion:Function;
+        internal var onDie:Function;
         internal var rowCount:int;
         internal var shrapnels:Array;
         internal var shrapnelAlive:int;
-        internal var onContagion:Function;
         internal var table:Array;
 
         private var detonateColumns:Dictionary;
@@ -193,6 +194,7 @@ package com.finegamedesign.one
                 mob.row += distance * mob.velocity.y;
                 if (reflect(mob, 0)) {
                     mob.alive = false;
+                    onDie();
                 }
                 aliveCount += mob.alive ? 1 : 0;
             }
