@@ -1,18 +1,17 @@
 TODO
-	see tile
 	scale to fit tiles.
-	speed up button
 	illustrate rat
 	animate rat
 	sound
 		hear collision
 		hear win
 		hear lose
+		hear rat move
+	see tile
+	screenshots
+	submit on ludumdare
 	music
 		auto-tracker
-	screenshots
-	name
-	submit on ludumdare
 	icon
 	kongregate
 	post-mortem
