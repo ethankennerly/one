@@ -192,6 +192,7 @@ package com.finegamedesign.one
 
         private function lose():void
         {
+            scoreUp();
             inTrial = false;
             FlxKongregate.api.stats.submit("Score", score);
             mouseChildren = false;

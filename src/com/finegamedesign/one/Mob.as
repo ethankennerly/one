@@ -11,7 +11,7 @@ package com.finegamedesign.one
         internal var solid:Boolean;
         internal var velocity:Point;
 
-        public function Mob(column:int, row:int, rotation:Number, solid:Boolean=true)
+        public function Mob(column:Number, row:Number, rotation:Number, solid:Boolean=true)
         {
             this.column = column;
             this.row = row;
