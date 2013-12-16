@@ -4,6 +4,7 @@ package com.finegamedesign.one
     import flash.display.SimpleButton;
     import flash.events.Event;
     import flash.events.MouseEvent;
+    import flash.media.Sound;
     import flash.text.TextField;
     import flash.utils.getTimer;
 
@@ -11,6 +12,10 @@ package com.finegamedesign.one
 
     public dynamic class Main extends MovieClip
     {
+        [Embed(source="../../../../sfx/contagion.mp3")]
+        private static var contagionClass:Class;
+        private var contagion:Sound = new contagionClass();
+
         public var detonator:MovieClip;
         public var feedback:MovieClip;
         public var highScore_txt:TextField;
@@ -33,7 +38,6 @@ package com.finegamedesign.one
         private var model:Model;
         private var previousTime:int;
         private var score:int;
-        private var speed:Number;
         private var view:View;
 
         public function Main()
@@ -52,13 +56,13 @@ package com.finegamedesign.one
             score = 0;
             highScore = 0;
             level = 1;
-            speed = 1.0;
             maxLevel = Model.levelDiagrams.length;
             previousTime = getTimer();
             elapsed = 0;
             mouseJustPressed = false;
             isMouseDown = false;
             model = new Model();
+            model.onContagion = contagion.play;
             view = new View();
             trial(level);
             addEventListener(Event.ENTER_FRAME, update, false, 0, true);
@@ -84,7 +88,7 @@ package com.finegamedesign.one
 
         private function alternateSpeed(event:MouseEvent):void
         {
-            speed = speed <= 1.0 ? 8.0: 1.0;
+            Model.alternateSpeed();
         }
 
         public function trial(level:int):void
@@ -111,7 +115,7 @@ package com.finegamedesign.one
         private function update(event:Event):void
         {
             var now:int = getTimer();
-            elapsed = speed * (now - previousTime) * 0.001;
+            elapsed = (now - previousTime) * 0.001;
             previousTime = now;
             // After stage is setup, connect to Kongregate.
             // http://flixel.org/forums/index.php?topic=293.0
@@ -201,7 +205,7 @@ package com.finegamedesign.one
             trial(level);
             mouseChildren = true;
             gotoAndPlay(1);
-            speed = 1.0;
+            Model.speed = Model.originalSpeed;
         }
     }
 }

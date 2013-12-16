@@ -1,5 +1,4 @@
 TODO
-	scale to fit tiles.
 	illustrate rat
 	animate rat
 	sound
@@ -7,7 +6,6 @@ TODO
 		hear win
 		hear lose
 		hear rat move
-	see tile
 	screenshots
 	submit on ludumdare
 	music
@@ -17,6 +15,7 @@ TODO
 	post-mortem
 	dynamic levels
 	sync position steps
+	see tile
 
 
 

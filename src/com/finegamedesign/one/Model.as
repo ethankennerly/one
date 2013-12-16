@@ -7,6 +7,14 @@ package com.finegamedesign.one
         [Embed(source="levels.txt", mimeType="application/octet-stream")]
         internal static var levelDiagramsClass:Class
         internal static var levelDiagrams:Array = parse(String(new levelDiagramsClass()));
+        internal static var originalSpeed:Number = 2.0;
+        internal static var speed:Number = 2.0;
+
+        internal static function alternateSpeed():void
+        {
+            Model.speed = Model.speed <= Model.originalSpeed ?
+                4.0 * Model.originalSpeed: Model.originalSpeed;
+        }
 
         internal static function parse(levelDiagramsText:String):Array
         {
@@ -15,7 +23,6 @@ package com.finegamedesign.one
 
         internal var kill:int;
         internal var maxKill:int;
-        internal var speed:Number = 2.0;
         internal var columnCount:int;
         internal var detonator:Mob;
         internal var diagram:String;
@@ -23,6 +30,7 @@ package com.finegamedesign.one
         internal var rowCount:int;
         internal var shrapnels:Array;
         internal var shrapnelAlive:int;
+        internal var onContagion:Function;
         internal var table:Array;
 
         private var detonateColumns:Dictionary;
@@ -219,6 +227,9 @@ package com.finegamedesign.one
         private function updateContagion(mob:Mob, previousColumn:Number, previousRow:Number, detonator:Mob):Boolean
         {
             if (collide(mob, previousColumn, previousRow, detonator)) {
+                if (null != onContagion) {
+                    onContagion();
+                }
                 kill++;
                 detonator.alive = false;
                 mob.alive = false;
