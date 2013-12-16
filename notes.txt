@@ -1,21 +1,15 @@
 TODO
-	illustrate rat
-	animate rat
+	post-mortem
+	sync position steps and spawns
+	scaffold chains in levels.  13/12/15 Joris Dormans expects to see how to plan a chain.
+	see tile.  13/12/15 Joris Dormans expects to see how to plan a chain.
+	NinjaNic Dec. 15, 2013 Needs a reset button, not a "restart from level 1" thing.
+	newgrounds
+	dynamic levels
 	sound
-		hear collision
-		hear win
-		hear lose
 		hear rat move
-	screenshots
-	submit on ludumdare
 	music
 		auto-tracker
-	icon
-	kongregate
-	post-mortem
-	dynamic levels
-	sync position steps
-	see tile
 
 
 
@@ -355,4 +349,20 @@ Step 17:
 Sat 12/14/2013 
 12:11
 
+
+Sun 12/15/2013 
+23:01
+
+Post-mortem
+
+What went right:
+
+Orthogonal contagion.
+Level text format.
+Cartoon illustration.
+
+What went wrong:
+
+Hacking collision code.
+Mob animation structure.
 
